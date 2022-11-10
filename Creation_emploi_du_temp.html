@@ -1,0 +1,153 @@
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!doctype html>
+<html lang="fr">
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        
+        <script>
+            var laclass ;
+            var lamatiere ;
+            var HTML="<table name='EmploiDuTemps' class='table table-bordered table-striped table-condensed bord'>" ;
+            HTML +="<thead><tr><th>Heure</th><th>Lundi</th><th>Mardi</th><th>Mercredi</th><th>Jeudi</th><th>Vendredi</th><th>Samedi</th></tr></thead><tbody>";
+            var ladate;
+            var titre ;
+            ladate= new Date();
+            ladate=ladate.getFullYear();
+            
+                function genererGrille()
+                {
+                    for(i=0 ; i<10 ; i++)
+                    {
+                        HTML+= "<tr>" ;
+                        for(j=0 ; j<7 ;j++)
+                        {
+                            if(j==0)
+                                HTML+= "<th>"+(8+i)+"h</th>" ;
+                            else
+                                HTML+= "<td>&nbsp</td>" ;
+                        }
+                        HTML+="</tr>";
+                    }
+                    $("#leCodeHTML").html(HTML);
+                }
+
+                function getPDF(cellule){
+
+                    event.preventDefault() ; // prevent the default behavior of links
+                    $("#matieres").hide() ;
+                    $("#informations").hide() ;
+                    $("#checkBox").hide() ;
+                    cellule.hide(); // faire disparaître le bouton "imprimer" à l'impression
+                    html2canvas($(".container")[0],{allowTaint:true}).then(function(canvas)
+                    {
+                        canvas.getContext('2d');
+                        var img = canvas.toDataURL('image/jpeg', 1.0);
+                        var pdf = new jspdf.jsPDF('l','mm', 'a4'); // p:portrait l:landscape
+                        //pdf.text(35, 25, "ICN 2017");
+                        // pdf.addImage(base64_source, image format, X, Y, width, height)
+                        pdf.addImage(img, 'jpeg', 0, 0, 290, 210);
+                        pdf.save('EmploiDuTemps.pdf');
+                    });
+
+                };
+                
+                $(function()
+                {
+                    titre = `<h2> Voici mon emploi du temps ${ladate} - ${ladate+1} </h2>`;
+                    $("#titre").html(titre) ;
+
+                    genererGrille();
+
+                    $("td").click(function()
+                    {
+                        $("#informations").hide() ; // faire disparaître l'information....
+                        cellule = $(this) ; // on mémorise la case
+                        if(lamatiere!=null)  // si on a choisi une matière
+                        {
+                            cellule.html(lamatiere);
+                            cellule.removeClass();
+                            cellule.addClass(laclass);
+                        }
+                    });
+
+                    $("a").click(function()
+                    {
+                        lamatiere = $(this).text();
+                        laclass = $(this).attr('class');
+                    });
+                    
+                    $("td").dblclick(function()
+                    {
+                        cellule.text("") ; // On supprime le texte de la cellule
+                        cellule.removeClass() ; // on retire automatiquement la "class" de la cellule
+                    });
+
+                    $("#downloadbtn").click(function()
+                    {
+                        getPDF($(this));
+                    });                   
+                });
+
+        </script>
+	</head>
+	<body>
+        <div class="container" class="canvas_div_pdf">
+            <div class="jumbotron text-center" id="jumbotron">
+                <h2 id="titre"></h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="leCodeHTML">
+                            <!-- Grille EDT générée par JQUERY -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <span class="badge badge-pill badge-primary" id="informations">Après avoir choisi la matière, cliquez sur les cases de l'emploi du temps afin de définir la matière</span>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="dropdown" id='matieres' >
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">liste des matières
+                        <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class='Ma'>Mathématique</a></li>
+                            <li><a href="#" class='An'>Anglais</a></li>
+                            <li><a href="#" class='Fr'>Culture G.</a></li>
+                            <li><a href="#" class='In'>Info et Réseaux</a></li>
+                            <li><a href="#" class='Ph'>Physique</a></li>
+                            <li><a href="#" class='Ap'>A.P.</a></li>
+                            <li><a href="#" class='Sa'>SPEC Anglais</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <button id="downloadbtn" class="btn btn-success">Print</button>
+                </div>
+                <div class="col-lg-4">
+                    <!-- Copyright -->
+                </div>
+            </div>
+        </div>
+	</body>
+</html>

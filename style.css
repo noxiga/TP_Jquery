@@ -1,0 +1,43 @@
+@charset "utf-8";
+th /* Les cellules d'en-tête */
+{
+ background-color: #34a300bc;
+ color: white;
+ font-size: 1.1em;
+ font-family: Arial, "Arial Black", Times, "Times New Roman", serif;
+ border:1px solid rgba(255, 0, 0, 0.548);
+}
+tr, html /* les lignes du tableau*/
+{
+background-color: #ffffff;
+}
+.blanc{
+background-color: #FFFFFF;
+}
+.gris{
+background-color: #cccc99;
+}
+.Ap {
+background-color: #ff0000ae;
+}
+.Sa {
+background-color: #9900ffa1;
+}
+.Fr {
+background-color: #20c6fed0;
+}
+.Ph {
+background-color: #56d4fec3;
+}
+.An {
+background-color: #effd4ec3;
+}
+.Ma {
+background-color: #ffc0dcc4;
+}
+.In {
+background-color: #46ff46a6;
+}
+img{
+height:50;
+}
